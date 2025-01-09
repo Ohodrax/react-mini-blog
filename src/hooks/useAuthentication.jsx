@@ -62,9 +62,53 @@ export const useAuthentication = () => {
         }
     }
 
+    const logout = () => {
+        
+        checkIfIsCancelled();
+
+        signOut(auth)
+    }
+
+    const login = async (data) => {
+        checkIfIsCancelled();
+
+        setLoading(true);
+        setError("");
+
+        try {
+            await signInWithEmailAndPassword(auth, data.email, data.password)
+            
+            setLoading(false);
+        } catch (authError) {
+            console.log(authError)
+            console.log(authError.code)
+            console.log(authError.message)
+            console.log(typeof authError.message)
+
+            let systemErrorMessage = "";
+    
+            switch (authError.code) {
+                case "auth/invalid-credential":
+                    systemErrorMessage = "Senha incorreta.";
+                break;
+    
+                case "auth/email-already-in-use":
+                    systemErrorMessage = "Este e-mail já está em uso.";
+                break;
+    
+                default:
+                    systemErrorMessage = "Ocorreu um erro.";
+                break;
+            }
+
+            setLoading(false);
+            setError(systemErrorMessage);
+        }
+    }
+
     useEffect(() => {
         return () => setCancelled(true);
     }, []);
 
-    return { auth, createUser, error, loading }
+    return { auth, createUser, error, loading, logout, login }
 }
