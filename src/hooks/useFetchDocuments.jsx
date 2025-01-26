@@ -23,6 +23,8 @@ export const useFetchDocuments = (docCollention, search, uid = null) => {
                 
                 if (search) {
                     q = await query(collenctionRef, where("tagsArray", "array-contains", search), orderBy('createdAt', 'desc'));
+                } else if (uid) {
+                    q = await query(collenctionRef, where("uid", "==", uid), orderBy('createdAt', 'desc'));
                 } else {
                     q = await query(collenctionRef, orderBy('createdAt', 'desc'));
                 }
@@ -47,7 +49,7 @@ export const useFetchDocuments = (docCollention, search, uid = null) => {
 
         loadData();
 
-    }, [docCollention, documents, search, uid, cancelled]);
+    }, [docCollention, search, uid, cancelled]);
 
     useEffect(() => {
         return () => setCancelled(true);
